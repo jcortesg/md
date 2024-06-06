@@ -1,0 +1,8 @@
+# Use the official MongoDB image
+FROM mongo:latest
+
+# Expose the default MongoDB port (27017)
+EXPOSE 27017
+
+# Start MongoDB when the container starts
+CMD ["mongod"]

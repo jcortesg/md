@@ -1,0 +1,40 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./data:/data/db
+      - ./entrypoints:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_USER_PWD}
+      - CONN_STR=mongodb://mongoUser:mongoPass@localhost:27017/dbApp
+    networks:
+      - mynetwork
+
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_PORT=${APP_PORT}
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_USER_PWD=${DB_USER_PWD}
+    depends_on:
+      - mongo
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
