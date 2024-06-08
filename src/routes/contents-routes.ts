@@ -1,26 +1,30 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { Content } from '../database/models/content.model';
+import { Request, Response, NextFunction, Router } from 'express';
+import { Content } from '../database/models/content-model';
 import { User } from '../database/models/user.model';
 import { Topic } from '../database/models/topic.model';
 import { Category } from '../database/models/category.model';
+import authentication from '../middleware/authentication';
 
-const router: Router = Router();
+export const router: Router = Router();
+
+// Obtener todas las temáticas
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const contents = await Content.find();
+    res.json({ contents });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Crear contenido
-router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', authentication, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
-      title,
-      description,
-      type,
-      url,
-      body,
-      createdBy,
-      topic,
-      category
-    } = req.body;
+      title, description, type, url, body, topic, category,
+    } = req.body.content;
 
-    // Verificar que el usuario, el tema y la categoría existan
+    const createdBy = (req as any).token.id;
     const user = await User.findById(createdBy);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -53,6 +57,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
 
 // Obtener contenido por ID
 router.get('/contents/:id', async (req: Request, res: Response, next: NextFunction) => {
