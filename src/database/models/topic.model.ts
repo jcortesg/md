@@ -1,6 +1,6 @@
 import { Document, Model, model, Schema } from 'mongoose';
 
-interface ITopic extends Document {
+export interface ITopic extends Document {
   name: string;
   permissions: {
     images: boolean;

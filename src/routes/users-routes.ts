@@ -9,6 +9,7 @@ const router: Router = Router();
  */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log(req.body);
     const { username, email, password, role } = req.body.user;
 
     // Validate input
@@ -28,6 +29,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(201).json({ user: user.toAuthJSON() });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });

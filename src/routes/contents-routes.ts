@@ -7,11 +7,14 @@ import authentication from '../middleware/authentication';
 
 export const router: Router = Router();
 
-// Obtener todas las temáticas
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const contents = await Content.find();
-    res.json({ contents });
+    const contents = await Content.find()
+    .populate('topic')
+    .populate('category')
+    .populate('createdBy');
+    const contentsWithAuthJSON = contents.map((content) => content.toAuthJSON());
+    res.json({ contents: contentsWithAuthJSON });
   } catch (error) {
     next(error);
   }
